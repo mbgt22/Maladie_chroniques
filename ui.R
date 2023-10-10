@@ -11,15 +11,28 @@ library(shiny)
 library(shinydashboard)
 
 ui <- dashboardPage(
-  dashboardHeader(title = "Impact de la qualité de vie \r\n sur l'incidence des maladies"),
+  dashboardHeader(title = "Impact de la qualité de vie sur l'incidence des maladies", titleWidth = 600),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Présentation", tabName = "presentation", icon = icon("dashboard")),
-      menuItem("Risque relatif par région", tabName = "risque_region", icon = icon("chart-line")),
-      menuItem("Synthèse des risques relatifs", tabName = "Risque_relatif", icon = icon("chart-bar")),
-      menuItem("espérance de vie des maladies chroniques",tabName="Inegalite_esperance_maladies_chroniques", icon=icon("chart-line")),
-      menuItem("Cartographie des risque",tabName="carte",icon = icon("map"))
-    )
+      menuItem("Présentation", tabName = "presentation",
+               icon = icon("dashboard")),
+      menuItem("Risque relatif par région",
+               tabName = "risque_region",
+               icon = icon("chart-line"), expandedName = TRUE,
+               menuSubItem("Graphiques", tabName = "Graph"),
+               menuSubItem("Cartes", tabName = "Carto")
+               ),
+      menuItem("Synthèse des risques relatifs",
+               tabName = "Risque_relatif",
+               icon = icon("chart-bar")),
+      menuItem("espérance de vie des maladies chroniques",
+               tabName="Inegalite_esperance_maladies_chroniques",
+               icon=icon("chart-line")),
+      menuItem("Cartographie des nouveaux cas de 2016-2017 ",
+               tabName="carte_utilisateur",
+               icon = icon("map"))
+    ),
+    width = 300
   ),
   dashboardBody(
     tags$head(
@@ -49,21 +62,28 @@ ui <- dashboardPage(
                        # I.1 : présentation de l'étude utilisée
                        tags$h2("Présentation de l'étude utilisée"),
                        tags$p(
-                         "L'étude se concentre sur le taux d'incidence et de prévalence des maladies 
+                         "L'étude se concentre sur le taux d'incidence et de prévalence de maladies 
                          chroniques en fonction de diverses variables socio-démographiques telles que le sexe, 
-                         l'âge, la région, le dixième de niveau de vie, le groupe socioprofessionnel et le diplôme. 
+                         l'âge, la région, le dixième de niveau de vie, le groupe socioprofessionnel et le diplôme 
+                         pour la période 2016-2017.
+                         Les maladies en question (colonne varTauxLib ) sont celles de la cartographie des pathologies de la CNAM. 
+                         Les données de l’EDP-Santé ont été mobilisées pour cette étude. L’EDP-Santé croise les données de 
+                         l’échantillon démographique permanent (EDP),produit par l’Insee, et donc celles du système national des données de santé (SNDS), produit par la CNAM.
+                         
+                        
                          Cette étude a été menée pour la publication « Les maladies chroniques touchent plus souvent 
                          les personnes modestes et réduisent davantage leur espérance de vie », figurant dans la série 
                          \"Études et Résultats\" sous le numéro 1243. 
                          l'étude et la base de données sont présentées à cette ", 
-                         tags$a(href="https://www.data.gouv.fr/fr/datasets/inegalites-sociales-face-aux-maladies-chroniques-er-1243/?fbclid=IwAR0W2p9SdFKz2z0TUdDv-YbWjEgq1z6ob93R1jv3Wfz0jmAgzanC8sRIoD0", "adresse"), "."
+                         tags$a(href="https://www.data.gouv.fr/fr/datasets/inegalites-sociales-face-aux-maladies-chroniques-er-1243/?fbclid=IwAR0W2p9SdFKz2z0TUdDv-YbWjEgq1z6ob93R1jv3Wfz0jmAgzanC8sRIoD0",
+                                "adresse"), "."
                        ),
                        
                        
                        # I.2 : définitions utiles
                        tags$h2("Définitions utiles"),
                        tags$p(tags$b("Taux d'incidence"), ": Cette définition décrit le nombre de nouveaux cas d'une maladie 
-                                      dans une population donnée pendant une période de temps spécifiée."),
+                                      dans une population donnée pendant une période de temps spécifiée (ici 2016-2017)."),
                        tags$p(tags$b("Prévalence"), ": Cette définition décrit la proportion d'individus dans une population 
                                       qui ont une caractéristique ou une condition donnée à un moment donné ou sur une période spécifiée."),
                        tags$p(tags$b("Risque relatif"), ": Cette définition décrit le ratio du risque de l'événement 
@@ -94,23 +114,23 @@ ui <- dashboardPage(
                        actionButton("showextraitbdd","Voir la base de donnée"),
                        
                        # III : fonctionnalité de l'application
-                         # Titre
-                         tags$h1("Fonctionnalités de l'application R Shiny"),
+                       # Titre
+                       tags$h1("Fonctionnalités de l'application R Shiny"),
+                       
+                       # Liste des fonctionnalités
+                       tags$ul(
+                         # Onglet Présentation
+                         tags$li(tags$b("Présentation:"), " Cet onglet sert d'introduction à l'application et donne un aperçu général de l'étude et de ses objectifs."),
                          
-                         # Liste des fonctionnalités
-                         tags$ul(
-                           # Onglet Présentation
-                           tags$li(tags$b("Présentation:"), " Cet onglet sert d'introduction à l'application et donne un aperçu général de l'étude et de ses objectifs."),
-                           
-                           # Onglet Risque relatif par région
-                           tags$li(tags$b("Risque relatif par région:"), " C'est ici que vous pouvez explorer le risque relatif des maladies chroniques en fonction du niveau de richesse des individus. En utilisant le ", tags$b("dixième de la population la plus aisée"), " comme référence, cet onglet offre un aperçu visuel des inégalités de santé en fonction de la richesse à travers différentes régions."),
-                           
-                           # Onglet Synthèse des risques relatifs
-                           tags$li(tags$b("Synthèse des risques relatifs:"), " Cette section est dédiée à une analyse globale des risques relatifs associés à différentes maladies, en fonction de plusieurs indicateurs de qualité de vie. Les utilisateurs peuvent personnaliser leur visualisation en sélectionnant des variables spécifiques liées à la qualité de vie, afin d'obtenir des insights sur les facteurs contribuant à ces risques."),
-                           
-                           # Onglet Espérance de vie des maladies chroniques
-                           tags$li(tags$b("Espérance de vie des maladies chroniques:"), " L'onglet met en lumière l'espérance de vie des personnes atteintes de maladies chroniques par rapport à celles non atteintes. Il utilise un tableau de calcul pour montrer la différence d'espérance de vie en fonction du niveau de richesse pour chaque maladie. Cette visualisation aide à comprendre l'écart entre les personnes ayant des affections et celles sans, tout en mettant en évidence l'influence du niveau de richesse sur cette dynamique.")
-                         ),
+                         # Onglet Risque relatif par région
+                         tags$li(tags$b("Risque relatif par région:"), " C'est ici que vous pouvez explorer le risque relatif des maladies chroniques en fonction du niveau de richesse des individus. En utilisant le ", tags$b("dixième de la population la plus aisée"), " comme référence, cet onglet offre un aperçu visuel des inégalités de santé en fonction de la richesse à travers différentes régions."),
+                         
+                         # Onglet Synthèse des risques relatifs
+                         tags$li(tags$b("Synthèse des risques relatifs:"), " Cette section est dédiée à une analyse globale des risques relatifs associés à différentes maladies, en fonction de plusieurs indicateurs de qualité de vie. Les utilisateurs peuvent personnaliser leur visualisation en sélectionnant des variables spécifiques liées à la qualité de vie, afin d'obtenir des insights sur les facteurs contribuant à ces risques."),
+                         
+                         # Onglet Espérance de vie des maladies chroniques
+                         tags$li(tags$b("Espérance de vie des maladies chroniques:"), " L'onglet met en lumière l'espérance de vie des personnes atteintes de maladies chroniques par rapport à celles non atteintes. Il utilise un tableau de calcul pour montrer la différence d'espérance de vie en fonction du niveau de richesse pour chaque maladie. Cette visualisation aide à comprendre l'écart entre les personnes ayant des affections et celles sans, tout en mettant en évidence l'influence du niveau de richesse sur cette dynamique.")
+                       ),
                        
                        # IV : modèle prédictif
                        tags$h1("Modèle prédictif"),
@@ -119,15 +139,28 @@ ui <- dashboardPage(
               )
       ),
       # Deuxième onglet
-      tabItem(tabName = "risque_region",
+      tabItem(tabName = "Graph",
+              
               fluidRow(
                 column(2,
                        wellPanel(
-                         checkboxGroupInput(inputId="region",label = "Choix de la région", 
-                                            choices = c("Guadeloupe"=1, "Martinique"=2, "Guyane"=3, "La Reunion"=4, "Saint-Pierre et Miquelon"=5, "Mayotte"=6, "Saint-Barthélémy"=7, "Saint-Martin"=8,"Ile-de-France"=11, "Centre-Val de Loire"=24, "Bourgogne-Franche-Comté"=27, "Normandie"=28, "Hauts-de-France"=32, "Grand Est"=44, "Pays de la Loire"=52, "Bretagne"=53, "Nouvelle-Aquitaine"=75, "Occitanie"=76, "Auvergne-Rhône-Alpes"=84, "Provence-Alpes-Côte d'Azur"=93, "Corse"=94), 
-                                            selected = 1
+                         radioButtons(inputId="region",label = "Choix de la région", 
+                                      choices = c("Guadeloupe"=1,"Martinique"=2,
+                                                  "Guyane"=3, "La Reunion"=4,
+                                                  "Saint-Pierre et Miquelon"=5, "Mayotte"=6,
+                                                  "Saint-Barthélémy"=7, "Saint-Martin"=8,
+                                                  "Ile-de-France"=11, "Centre-Val de Loire"=24,
+                                                  "Bourgogne-Franche-Comté"=27, "Normandie"=28,
+                                                  "Hauts-de-France"=32, "Grand Est"=44,
+                                                  "Pays de la Loire"=52, "Bretagne"=53,
+                                                  "Nouvelle-Aquitaine"=75, "Occitanie"=76,
+                                                  "Auvergne-Rhône-Alpes"=84, "Provence-Alpes-Côte d'Azur"=93,
+                                                  "Corse"=94), 
+                                      
+                                      selected = 1
                          ),
-                         selectInput(inputId="maladie", label="catégorie de maladie",
+                         
+                         selectInput(inputId="pathologie", label="catégorie de maladie",
                                      choices=c("Maladies inflammatoires ou rares ou VIH ou SIDA",
                                                "Diabète",                                       
                                                "Maladies cardioneurovasculaires",                
@@ -141,11 +174,20 @@ ui <- dashboardPage(
                                                "Cancers"
                                      )
                          )
+                         
                        )
-                ),
-                column(10, plotOutput("Graphique"))
+                ), column(10, plotOutput("Graphique"))
               )
       ),
+      
+      tabItem(tabName = "Carto",
+              fluidRow(
+                column(2,),
+                column(10,plotOutput("carteresume", width = "100%", height = "500px")))
+      ),
+      
+      
+            
       # Troisième onglet
       tabItem(tabName = "Risque_relatif",
               fluidRow(
@@ -189,7 +231,97 @@ ui <- dashboardPage(
                        )
                 )
               )
-      )
+      ),
+      
+      tabItem(tabName = "carte_utilisateur",
+              fluidRow(
+                
+                # Colonne 1 sélection des paramètres pour la carte 1
+                column(width=3,
+                       radioButtons(inputId ="emploi",label = "Emploi",
+                                    choiceNames = profession_lib,
+                                    choiceValues = profession_moda,
+                                    
+                                    selected = 1), 
+                       
+                       radioButtons(inputId="diplome",label="Diplome le plus élevé",
+                                    choiceName = diplome_lib , 
+                                    choiceValues = diplome_moda,
+                                    selected = 1),
+                       
+                       selectInput(inputId = "NVD",label="Niveau de vie",
+                                   choices = richesse,
+                                   selected = 1),
+                       
+                       
+                       selectInput(inputId = "age", label="Âge",
+                                   
+                                   choices = age,
+                                   selected = "50-59"), 
+                       
+                       radioButtons(inputId ="sexe", label="Sexe",
+                                    choiceNames = sexe_lib,
+                                    choiceValues = sexe_moda,
+                                    selected = "F"),
+                       
+                       selectInput(inputId ="maladie",label = "Maladie",
+                                   
+                                   choices = maladie,
+                                   selected ="SUP_CAN_CAT"),
+                       actionButton(inputId = "Carte1", label = "Générer la carte ")
+                       
+                ),
+                
+                
+                
+                # Colonne 2 carte 1
+                column(width=3,
+                       textOutput("titrecarte1"),
+                       highchartOutput("plot1")),
+                # Colonne 3 sélection des paramètres pour la carte 2
+                column(width=3,
+                       radioButtons(inputId ="emploi2",label = "Emploi",
+                                    choiceNames = profession_lib,
+                                    choiceValues = profession_moda,
+                                    
+                                    selected = 1), 
+                       
+                       radioButtons(inputId="diplome2",label="Diplome le plus élevé",
+                                    choiceName = diplome_lib , 
+                                    choiceValues = diplome_moda,
+                                    selected = 1),
+                       
+                       selectInput(inputId = "NVD2",label="Niveau de vie",
+                                   choices = richesse,
+                                   selected = 1),
+                       
+                       
+                       selectInput(inputId = "age2", label="Âge",
+                                   
+                                   choices = age,
+                                   selected = "50-59"), 
+                       
+                       radioButtons(inputId ="sexe2", label="Sexe",
+                                    choiceNames = sexe_lib,
+                                    choiceValues = sexe_moda,
+                                    selected = "M"),
+                       
+                       selectInput(inputId ="maladie2",label = "Maladie",
+                                   
+                                   choices = maladie,
+                                   selected ="SUP_CAN_CAT"),
+                       actionButton(inputId = "Carte2", label = "Générer la carte ")
+                       
+                ),
+                
+                #colonne 4 carte 2
+                column(width=3,
+                       textOutput("titrecarte2"),
+                       highchartOutput("plot2"))
+              )
+      )#,
+      #tabItem(tabName = "prediction",)
+      
     )
   )
 )
