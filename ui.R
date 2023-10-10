@@ -53,7 +53,7 @@ ui <- dashboardPage(
               fluidRow(
                 column(12,
                        # I : objet de l'application
-                       tags$h1("Objet de l'application"),
+                       tags$h1("Maladie Chroniques (ER 1243)"),
                        
                        # I.1 : objectif
                        tags$h2("Objectif de l'application"),
@@ -86,8 +86,9 @@ ui <- dashboardPage(
                        tags$h2("Définitions utiles"),
                        tags$p(tags$b("Taux d'incidence"), ": Cette définition décrit le nombre de nouveaux cas d'une maladie 
                                       dans une population donnée pendant une période de temps spécifiée (ici 2016-2017)."),
-                       tags$p(tags$b("Prévalence"), ": Cette définition décrit la proportion d'individus dans une population 
-                                      qui ont une caractéristique ou une condition donnée à un moment donné ou sur une période spécifiée."),
+                       tags$p(tags$b("Prévalence"), ": se calcule en rapportant le nombre de malades,
+                                                      anciens ou nouveaux, à la population totale. Elle porte sur le stock
+                                                      de malades et mesure ainsi le risque de vivre avec la maladie."),
                        tags$p(tags$b("Risque relatif"), ": Cette définition décrit le ratio du risque de l'événement 
                                     (par exemple, développer une maladie) dans le groupe exposé au risque dans le groupe non exposé."),
                        
@@ -125,25 +126,33 @@ ui <- dashboardPage(
                          tags$li(tags$b("Présentation:"), " Cet onglet sert d'introduction à l'application et donne un aperçu général de l'étude et de ses objectifs."),
                          
                          # Onglet Risque relatif par région
-                         tags$li(tags$b("Risque relatif par région:"), " C'est ici que vous pouvez explorer le risque relatif des maladies chroniques en fonction du niveau de richesse des individus. En utilisant le ", tags$b("dixième de la population la plus aisée"), " comme référence, cet onglet offre un aperçu visuel des inégalités de santé en fonction de la richesse à travers différentes régions."),
+                         tags$li(tags$b("Risque relatif par région:"), " C'est ici que vous pouvez explorer le risque relatif des maladies chroniques en fonction du niveau de richesse des individus. En utilisant le ", 
+                                 tags$b("dixième de la population la plus aisée"), " comme référence, cet onglet offre un aperçu visuel des inégalités de santé en fonction de la richesse à travers différentes régions."),
                          
                          # Onglet Synthèse des risques relatifs
                          tags$li(tags$b("Synthèse des risques relatifs:"), " Cette section est dédiée à une analyse globale des risques relatifs associés à différentes maladies, en fonction de plusieurs indicateurs de qualité de vie. Les utilisateurs peuvent personnaliser leur visualisation en sélectionnant des variables spécifiques liées à la qualité de vie, afin d'obtenir des insights sur les facteurs contribuant à ces risques."),
                          
                          # Onglet Espérance de vie des maladies chroniques
-                         tags$li(tags$b("Espérance de vie des maladies chroniques:"), " L'onglet met en lumière l'espérance de vie des personnes atteintes de maladies chroniques par rapport à celles non atteintes. Il utilise un tableau de calcul pour montrer la différence d'espérance de vie en fonction du niveau de richesse pour chaque maladie. Cette visualisation aide à comprendre l'écart entre les personnes ayant des affections et celles sans, tout en mettant en évidence l'influence du niveau de richesse sur cette dynamique.")
+                         tags$li(tags$b("Espérance de vie des maladies chroniques:"),
+                                 " L'onglet met en lumière l'espérance de vie des personnes atteintes de maladies chroniques par rapport à celles non atteintes. Il utilise un tableau de calcul pour montrer la différence d'espérance de vie en fonction du niveau de richesse pour chaque maladie. Cette visualisation aide à comprendre l'écart entre les personnes ayant des affections et celles sans, tout en mettant en évidence l'influence du niveau de richesse sur cette dynamique."),
+                         
+                         # Onglet carto 
+                         tags$li(tags$b("Cartographies des nouveaux cas de 2016 -2017:"), "Cette section permet à l'utilisateur de visualisé les nouveaux cas pour une maladies chroniques choisit dans toutes les régions de france en sélectionnant des critères de catégories socio -professionnelles.")
+                         
                        ),
                        
                        # IV : modèle prédictif
                        tags$h1("Perspective et amélioration"),
-                       tags$p(" Outil de prédiction : Prediction à partir des données du risque relatif.
-                              On auarait pu imaginer une régression lassso  dans un premier temps pour évaluer les 
-                              variables qui ont plus de poids dans la prédiction du risque.
-                              
-                              Traitement des données NA : 
-                              - voir si autre un traitement  impact nos résultats
-                              
-                              ")
+                       tags$ul(
+                         tags$li(tags$b(" Outil de prédiction :"), " Prediction à partir des données du risque relatif.
+                                On auarait pu imaginer une régression lassso  dans un premier temps pour évaluer les 
+                                variables qui ont plus de poids dans la prédiction du risque."),
+                                 
+                        tags$li(tags$b("Traitement des données NA :"), 
+                                 "- voir si autre un traitement  impact nos résultats")
+                                 
+                         )
+                       
                 )
               )
       ),
@@ -153,20 +162,9 @@ ui <- dashboardPage(
               fluidRow(
                 column(2,
                        wellPanel(
-                         radioButtons(inputId="region",label = "Choix de la région", 
-                                      choices = c("Guadeloupe"=1,"Martinique"=2,
-                                                  "Guyane"=3, "La Reunion"=4,
-                                                  "Saint-Pierre et Miquelon"=5, "Mayotte"=6,
-                                                  "Saint-Barthélémy"=7, "Saint-Martin"=8,
-                                                  "Ile-de-France"=11, "Centre-Val de Loire"=24,
-                                                  "Bourgogne-Franche-Comté"=27, "Normandie"=28,
-                                                  "Hauts-de-France"=32, "Grand Est"=44,
-                                                  "Pays de la Loire"=52, "Bretagne"=53,
-                                                  "Nouvelle-Aquitaine"=75, "Occitanie"=76,
-                                                  "Auvergne-Rhône-Alpes"=84, "Provence-Alpes-Côte d'Azur"=93,
-                                                  "Corse"=94), 
-                                      
-                                      selected = 1
+                         checkboxGroupInput(inputId="region",label = "Choix de la région", 
+                                            choices = c("Guadeloupe"=1, "Martinique"=2, "Guyane"=3, "La Reunion"=4, "Saint-Pierre et Miquelon"=5, "Mayotte"=6, "Saint-Barthélémy"=7, "Saint-Martin"=8,"Ile-de-France"=11, "Centre-Val de Loire"=24, "Bourgogne-Franche-Comté"=27, "Normandie"=28, "Hauts-de-France"=32, "Grand Est"=44, "Pays de la Loire"=52, "Bretagne"=53, "Nouvelle-Aquitaine"=75, "Occitanie"=76, "Auvergne-Rhône-Alpes"=84, "Provence-Alpes-Côte d'Azur"=93, "Corse"=94), 
+                                            selected = 1
                          ),
                          
                          selectInput(inputId="pathologie", label="catégorie de maladie",

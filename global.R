@@ -21,7 +21,7 @@ if (!file.exists(sourceDonnees)) {
 
 
 inegalite <- fread(sourceDonnees, stringsAsFactors = TRUE, encoding = "UTF-8")
-inegalite <- na.omit(inegalite)
+inegalite[inegalite$txstanddir] <- median(inegalite$txstanddir)
 prevalence <- inegalite[type == "prevalence"]
 incidence <- inegalite[type == "incidence"]
 unique(incidence$valgroupage)
@@ -340,8 +340,7 @@ carte_utilisateur <- function(don){
 
 
 #############présentation des libellés de vargroupage
-libelle<-read.table("Donnees/libelles_er12432.csv",header = TRUE,sep=";")
-libelle<-libelle[,1:3]
+libelle<-lib[,1:3]
 
 #############affichage d'un extrait de la base de donnée
 extraitbdd<-incidence[1:20,]
