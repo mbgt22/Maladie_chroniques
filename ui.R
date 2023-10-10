@@ -16,18 +16,20 @@ ui <- dashboardPage(
     sidebarMenu(
       menuItem("Présentation", tabName = "presentation",
                icon = icon("dashboard")),
-      menuItem("Risque relatif par région",
-               tabName = "risque_region",
-               icon = icon("chart-line"), expandedName = TRUE,
-               menuSubItem("Graphiques", tabName = "Graph"),
-               menuSubItem("Cartes", tabName = "Carto")
-               ),
+      
       menuItem("Synthèse des risques relatifs",
                tabName = "Risque_relatif",
                icon = icon("chart-bar")),
+      
+      menuItem("Risque relatif par région",
+               tabName = "risque_region",
+               icon = icon("chart-line"), expandedName = TRUE,
+               menuSubItem("Graphique et Cartes", tabName = "Graph")),
+               
       menuItem("espérance de vie des maladies chroniques",
                tabName="Inegalite_esperance_maladies_chroniques",
                icon=icon("chart-line")),
+      
       menuItem("Cartographie des nouveaux cas de 2016-2017 ",
                tabName="carte_utilisateur",
                icon = icon("map"))
@@ -133,8 +135,15 @@ ui <- dashboardPage(
                        ),
                        
                        # IV : modèle prédictif
-                       tags$h1("Modèle prédictif"),
-                       tags$p("Description de votre modèle prédictif...")
+                       tags$h1("Perspective et amélioration"),
+                       tags$p(" Outil de prédiction : Prediction à partir des données du risque relatif.
+                              On auarait pu imaginer une régression lassso  dans un premier temps pour évaluer les 
+                              variables qui ont plus de poids dans la prédiction du risque.
+                              
+                              Traitement des données NA : 
+                              - voir si autre un traitement  impact nos résultats
+                              
+                              ")
                 )
               )
       ),
@@ -176,15 +185,13 @@ ui <- dashboardPage(
                          )
                          
                        )
-                ), column(10, plotOutput("Graphique"))
+                ), column(10, plotOutput("Graphique"),
+                          plotOutput("carteresume", width = "100%", height = "500px")
+                          )
               )
       ),
       
-      tabItem(tabName = "Carto",
-              fluidRow(
-                column(2,),
-                column(10,plotOutput("carteresume", width = "100%", height = "500px")))
-      ),
+    
       
       
             

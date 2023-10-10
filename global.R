@@ -44,7 +44,7 @@ reg_geo <- mutate(reg_geo, CODGEO = c(11, 24, 27, 28, 32, 44, 52, 53, 75, 76, 84
 
 t <- inegalite[  vargroupage == "FISC_NIVVIEM_E2015_S_moy_10" &
              varpartition == "FISC_REG_S" &
-             type == "prevalence" &
+             type == "incidence" &
              i_cat == 1][, .(g_dir = (txstanddir[valgroupage == 1] / txstanddir[valgroupage == 10]),
                              g_indir = (txstandindir[valgroupage == 1] / txstandindir[valgroupage == 10])), 
                          by = .(valpartition, catlib)][order(valpartition, -g_dir)]
@@ -318,9 +318,9 @@ carte_resume <- function(don){
     facet_wrap(~ catlib, ncol = 4, labeller = label_wrap_gen(width = 25, multi_line = TRUE)) +
     scale_fill_distiller(direction = 1,
                          palette = 7,
-                         na.value = "grey20",
+                         na.value = "grey",
                          name = "ratio D1/D10") +
-    ggtitle("Inégalités régionales de prévalence")
+    ggtitle("Inégalités régionales d'incidences")
   return(p)}
 
 
